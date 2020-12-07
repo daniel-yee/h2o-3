@@ -3,8 +3,6 @@ package hex.tree;
 import hex.*;
 import hex.genmodel.GenModel;
 import hex.genmodel.utils.DistributionFamily;
-import hex.quantile.Quantile;
-import hex.quantile.QuantileModel;
 import hex.tree.gbm.GBMModel;
 import hex.util.CheckpointUtils;
 import hex.util.LinearAlgebraUtils;
@@ -25,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
-import java.util.function.Function;
 
 public abstract class SharedTree<
     M extends SharedTreeModel<M,P,O>, 
@@ -287,7 +284,7 @@ public abstract class SharedTree<
         if (_parms._histogram_type == SharedTreeModel.SharedTreeParameters.HistogramType.QuantilesGlobal
                 || _parms._histogram_type == SharedTreeModel.SharedTreeParameters.HistogramType.RoundRobin) {
           _job.update(1, "Computing top-level histogram splitpoints.");
-          final double[][] splitPoints = GlobalQuantilesCalc.globalQuantiles(_train, _parms._weights_column, _parms._nbins, _parms._nbins_top_level);
+          final double[][] splitPoints = GlobalQuantilesCalc.splitPoints(_train, _parms._weights_column, _parms._nbins, _parms._nbins_top_level);
           Futures fs = new Futures();
           for (int i = 0; i < splitPoints.length; i++) {
             Key<DHistogram.HistoQuantiles> key = getGlobalQuantilesKey(i);
